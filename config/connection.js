@@ -17,13 +17,12 @@ if (process.env.JAWSDB_URL) {
 }
 
 // Make connection.
-connection.connect(function(err) {
-    if (err) {
-        console.error("error connecting: " + err.stack);
-        return;
+connection.config.typeCast = function(field, next) {
+    if (field.type == "TINY" && field.length == 1) {
+        return field.string() == "1"; // 1 = true, 0 = false
     }
-    console.log("connected as id " + connection.threadId);
-});
+    return next();
+};
 
 // Export connection for our ORM to use.
 module.exports = connection;
